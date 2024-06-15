@@ -15,7 +15,7 @@ struct ContentView: View {
     @State private var meshPosition: SCNVector3 = SCNVector3(0, 0, 0)
     @State private var meshRotation: SCNVector3 = SCNVector3(0, 0, 0)
     @State private var meshScale: SCNVector3 = SCNVector3(0.2, 0.2, 0.2)
-    @State private var inputText: String = ""
+    @State private var inputText: String = "Do you think this is working now?"
 
     var body: some View {
         VStack {

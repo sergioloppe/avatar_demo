@@ -17,6 +17,7 @@
 		49DF49FC2C1D982D00E07670 /* SyllableProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF49FB2C1D982D00E07670 /* SyllableProcessor.swift */; };
 		49DF49FE2C1D984000E07670 /* SceneViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF49FD2C1D984000E07670 /* SceneViewContainer.swift */; };
 		49DF4A002C1D9EA700E07670 /* SyllableMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF49FF2C1D9EA700E07670 /* SyllableMapper.swift */; };
+		49DF4A022C1DB30500E07670 /* TextToSpeechProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF4A012C1DB30500E07670 /* TextToSpeechProcessor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		49DF49FB2C1D982D00E07670 /* SyllableProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyllableProcessor.swift; sourceTree = "<group>"; };
 		49DF49FD2C1D984000E07670 /* SceneViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViewContainer.swift; sourceTree = "<group>"; };
 		49DF49FF2C1D9EA700E07670 /* SyllableMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyllableMapper.swift; sourceTree = "<group>"; };
+		49DF4A012C1DB30500E07670 /* TextToSpeechProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToSpeechProcessor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 				49DF49E42C1D948600E07670 /* AvatarDemoApp.swift */,
 				49DF49E62C1D948600E07670 /* ContentView.swift */,
 				49DF49FD2C1D984000E07670 /* SceneViewContainer.swift */,
+				49DF4A012C1DB30500E07670 /* TextToSpeechProcessor.swift */,
 				49DF49FB2C1D982D00E07670 /* SyllableProcessor.swift */,
 				49DF49FF2C1D9EA700E07670 /* SyllableMapper.swift */,
 				49DF49F22C1D949E00E07670 /* ShapeKeyAnimator.swift */,
@@ -171,6 +174,7 @@
 				49DF49E52C1D948600E07670 /* AvatarDemoApp.swift in Sources */,
 				49DF49FC2C1D982D00E07670 /* SyllableProcessor.swift in Sources */,
 				49DF49F32C1D949E00E07670 /* ShapeKeyAnimator.swift in Sources */,
+				49DF4A022C1DB30500E07670 /* TextToSpeechProcessor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

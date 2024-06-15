@@ -8,7 +8,6 @@
 import SwiftUI
 import SceneKit
 import SpriteKit
-import AVFoundation
 
 struct SceneViewContainer: UIViewRepresentable {
     @Binding var cameraPosition: SCNVector3
@@ -20,7 +19,7 @@ struct SceneViewContainer: UIViewRepresentable {
         var parent: SceneViewContainer
         var sceneView: SCNView?
         var shapeKeyAnimator: ShapeKeyAnimator?
-        var speechSynthesizer: AVSpeechSynthesizer = AVSpeechSynthesizer()
+        var textToSpeechProcessor: TextToSpeechProcessor
         
         // Constants
         let nodeNameRoot = "root"
@@ -30,24 +29,26 @@ struct SceneViewContainer: UIViewRepresentable {
 
         init(parent: SceneViewContainer) {
             self.parent = parent
+            self.textToSpeechProcessor = TextToSpeechProcessor()
             super.init()
+            NotificationCenter.default.addObserver(self, selector: #selector(changeShapeKey(notification:)), name: .changeShapeKey, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(readText(notification:)), name: .readText, object: nil)
         }
 
         @objc func changeShapeKey(notification: NSNotification) {
             guard let shapeKey = notification.object as? String else { return }
-            shapeKeyAnimator?.animateShapeKey(named: shapeKey)
+            shapeKeyAnimator?.animateShapeKey(named: shapeKey, duration: shapeKeyAnimator?.asyncAnimationDuration ?? 0.5)
         }
 
         @objc func readText(notification: NSNotification) {
             guard let text = notification.object as? String else { return }
-            processAndReadText(text)
+            textToSpeechProcessor.processAndReadText(text, animator: shapeKeyAnimator)
         }
 
         func setup(sceneView: SCNView) {
             self.sceneView = sceneView
             sceneView.delegate = self
-            NotificationCenter.default.addObserver(self, selector: #selector(changeShapeKey(notification:)), name: .changeShapeKey, object: nil)
+            startContinuousRotation()
         }
 
         func initializeShapeKeyAnimatorIfNeeded() {
@@ -75,7 +76,7 @@ struct SceneViewContainer: UIViewRepresentable {
             let textureMaterial = SCNMaterial()
             textureMaterial.diffuse.contents = loadedTexture
             
-            if let meshNode = node.childNode(withName: "Mesh", recursively: true) {
+            if let meshNode = node.childNode(withName: nodeNameMesh, recursively: true) {
                 meshNode.geometry?.materials = [textureMaterial]
             }
         }
@@ -121,17 +122,12 @@ struct SceneViewContainer: UIViewRepresentable {
             node.position = SCNVector3(0, 0, -scaleFactor * 1.23)
         }
 
-        func processAndReadText(_ text: String) {
-            // Process the text into syllables
-            let syllables = SyllableProcessor.processTextToSyllables(text)
-
-            // Animate the morphers for each syllable
-            shapeKeyAnimator?.animateSyllables(syllables)
-
-            // Use TTS to read the text
-            let utterance = AVSpeechUtterance(string: text)
-            utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-            speechSynthesizer.speak(utterance)
+        private func startContinuousRotation() {
+            guard let sceneView = sceneView else { return }
+            guard let meshNode = sceneView.scene?.rootNode.childNode(withName: nodeNameMesh, recursively: true) else { return }
+            
+            let rotationAction = SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: CGFloat(GLKMathDegreesToRadians(10)), z: 0, duration: 5))
+            meshNode.runAction(rotationAction)
         }
     }
 

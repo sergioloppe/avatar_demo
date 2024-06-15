@@ -8,10 +8,17 @@
 import SceneKit
 
 class ShapeKeyAnimator: NSObject {
-    private var timer: Timer?
+    private var syncTimer: Timer?
+    private var asyncTimer: Timer?
     private var morpher: SCNMorpher?
     private var targetIndices: [String: Int] = [:]
     private var syllableMapper: SyllableMapper
+
+    var asyncFrequencyRange: ClosedRange<TimeInterval> = 2.0...5.0
+    var asyncAnimationDuration: TimeInterval = 0.1
+    var syncAnimationDuration: TimeInterval = 0.09
+
+    static let asyncTargets = ["vrc_lowerlid_right", "vrc_lowerlid_left", "vrc_blink_right", "vrc_blink_left"]
 
     init(morpher: SCNMorpher, syllableMapper: SyllableMapper) {
         self.morpher = morpher
@@ -20,21 +27,32 @@ class ShapeKeyAnimator: NSObject {
         for (index, name) in DefaultSyllableMapper.targetNames.enumerated() {
             targetIndices[name] = index
         }
+        startAsyncAnimations()
     }
     
-    func animateShapeKey(named shapeKey: String) {
+    private func startAsyncAnimations() {
+        asyncTimer?.invalidate()
+        asyncTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval.random(in: asyncFrequencyRange), repeats: true) { [weak self] timer in
+            self?.blink()
+        }
+    }
+
+    private func blink() {
+        let blinkTargets = ["vrc_lowerlid_left", "vrc_blink_right"]
+        animateMultipleShapeKey(named:blinkTargets, duration: asyncAnimationDuration)
+    }
+
+    func animateShapeKey(named shapeKey: String, duration: TimeInterval) {
         guard let morpher = self.morpher, let targetIndex = targetIndices[shapeKey] else { return }
-        
-        // Invalidate any existing timer
-        timer?.invalidate()
         
         // Smoothly transition the weight up and then down
         var currentWeight: Float = 0.0
-        let step: Float = 0.1
+        let step: Float = 1.0 / Float(duration)
         var goingUp = true
         
-        timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { [weak self] timer in
-            guard let self = self else { return }
+        print("\(shapeKey) with duration \(duration)")
+        
+        Timer.scheduledTimer(withTimeInterval: duration, repeats: true) { timer in
             if goingUp {
                 currentWeight += step
                 if currentWeight >= 1.0 {
@@ -56,16 +74,53 @@ class ShapeKeyAnimator: NSObject {
             morpher.setWeight(CGFloat(currentWeight), forTargetAt: targetIndex)
         }
     }
-    
-    func animateSyllables(_ syllables: [String]) {
+
+    func animateMultipleShapeKey(named shapeKeys: [String], duration: TimeInterval) {
         guard let morpher = self.morpher else { return }
+
+        let targetIndices = shapeKeys.compactMap { self.targetIndices[$0] }
+        guard !targetIndices.isEmpty else { return }
+        
+        // Smoothly transition the weight up and then down
+        var currentWeight: Float = 0.0
+        let step: Float = 1.0 / Float(duration * 100)
+        var goingUp = true
+        
+        Timer.scheduledTimer(withTimeInterval: 0.005, repeats: true) { timer in
+            if goingUp {
+                currentWeight += step
+                if currentWeight >= 1.0 {
+                    currentWeight = 1.0
+                    goingUp = false
+                }
+            } else {
+                currentWeight -= step
+                if currentWeight <= 0.0 {
+                    currentWeight = 0.0
+                    timer.invalidate()
+                }
+            }
+            
+            // Reset all weights to 0 before setting the target weight
+            for i in 0..<morpher.targets.count {
+                morpher.setWeight(0.0, forTargetAt: i)
+            }
+            
+            for targetIndex in targetIndices {
+                morpher.setWeight(CGFloat(currentWeight), forTargetAt: targetIndex)
+            }
+        }
+    }
+    
+    func animateSyllables(_ syllables: [String], totalDuration: TimeInterval) {
+        guard let morpher = self.morpher else { return }
+
+        let syllableDuration = totalDuration / TimeInterval(syllables.count)
         
         var syllableIndex = 0
         
-        // Invalidate any existing timer
-        timer?.invalidate()
-        
-        timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] timer in
+        syncTimer?.invalidate()
+        syncTimer = Timer.scheduledTimer(withTimeInterval: syllableDuration, repeats: true) { [weak self] timer in
             guard let self = self else { return }
             if syllableIndex >= syllables.count {
                 timer.invalidate()
@@ -75,8 +130,7 @@ class ShapeKeyAnimator: NSObject {
             let syllable = syllables[syllableIndex]
             let mappedTarget = self.syllableMapper.mapSyllableToMorpher(syllable)
             if let targetIndex = self.targetIndices[mappedTarget] {
-                // Animate the target morpher for the current syllable
-                self.animateShapeKey(named: mappedTarget)
+                self.animateShapeKey(named: mappedTarget, duration: syllableDuration)
             }
             
             syllableIndex += 1

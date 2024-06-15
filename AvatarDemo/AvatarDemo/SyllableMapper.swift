@@ -20,7 +20,6 @@ class DefaultSyllableMapper: SyllableMapper {
     }
     
     private func getPhoneme(for syllable: String) -> String {
-        // Simplistic phoneme extraction for demonstration purposes
         let vowels = CharacterSet(charactersIn: "aeiou")
         for char in syllable.lowercased() {
             if String(char).rangeOfCharacter(from: vowels) != nil {
@@ -46,7 +45,7 @@ class DefaultSyllableMapper: SyllableMapper {
             return "vrc_v_th"
         case "s":
             return "vrc_v_ss"
-        case "rr":
+        case "r":
             return "vrc_v_rr"
         case "p":
             return "vrc_v_pp"
@@ -63,8 +62,7 @@ class DefaultSyllableMapper: SyllableMapper {
         case "sil":
             return "vrc_v_sil"
         default:
-            return "vrc_v_sil" // Default to silence
+            return "vrc_v_sil"
         }
     }
 }
-
