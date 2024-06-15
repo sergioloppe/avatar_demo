@@ -33,6 +33,8 @@ struct SceneViewContainer: UIViewRepresentable {
             super.init()
             NotificationCenter.default.addObserver(self, selector: #selector(changeShapeKey(notification:)), name: .changeShapeKey, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(readText(notification:)), name: .readText, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(moveHeadLeft(notification:)), name: .moveHeadLeft, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(moveHeadRight(notification:)), name: .moveHeadRight, object: nil)
         }
 
         @objc func changeShapeKey(notification: NSNotification) {
@@ -43,6 +45,14 @@ struct SceneViewContainer: UIViewRepresentable {
         @objc func readText(notification: NSNotification) {
             guard let text = notification.object as? String else { return }
             textToSpeechProcessor.processAndReadText(text, animator: shapeKeyAnimator)
+        }
+
+        @objc func moveHeadLeft(notification: NSNotification) {
+            moveHead(to: .left)
+        }
+
+        @objc func moveHeadRight(notification: NSNotification) {
+            moveHead(to: .right)
         }
 
         func setup(sceneView: SCNView) {
@@ -129,6 +139,27 @@ struct SceneViewContainer: UIViewRepresentable {
             let rotationAction = SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: CGFloat(GLKMathDegreesToRadians(10)), z: 0, duration: 5))
             meshNode.runAction(rotationAction)
         }
+
+        func moveHead(to direction: HeadDirection, degrees: Float = 10) {
+            guard let sceneView = sceneView else { return }
+            guard let headNode = sceneView.scene?.rootNode.childNode(withName: nodeNameHead, recursively: true) else { return }
+
+            let angle: CGFloat
+            switch direction {
+            case .left:
+                angle = CGFloat(GLKMathDegreesToRadians(degrees))
+            case .right:
+                angle = CGFloat(GLKMathDegreesToRadians(-degrees))
+            }
+
+            let rotateAction = SCNAction.rotateBy(x: 0, y: angle, z: angle, duration: 0.5)
+            headNode.runAction(rotateAction)
+        }
+
+        enum HeadDirection {
+            case left
+            case right
+        }
     }
 
     func makeCoordinator() -> Coordinator {
@@ -174,4 +205,6 @@ struct SceneViewContainer: UIViewRepresentable {
 extension Notification.Name {
     static let changeShapeKey = Notification.Name("changeShapeKey")
     static let readText = Notification.Name("readText")
+    static let moveHeadLeft = Notification.Name("moveHeadLeft")
+    static let moveHeadRight = Notification.Name("moveHeadRight")
 }

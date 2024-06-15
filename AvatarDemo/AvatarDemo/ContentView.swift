@@ -15,7 +15,7 @@ struct ContentView: View {
     @State private var meshPosition: SCNVector3 = SCNVector3(0, 0, 0)
     @State private var meshRotation: SCNVector3 = SCNVector3(0, 0, 0)
     @State private var meshScale: SCNVector3 = SCNVector3(0.2, 0.2, 0.2)
-    @State private var inputText: String = "Do you think this is working now?"
+    @State private var inputText: String = ""
 
     var body: some View {
         VStack {
@@ -25,18 +25,34 @@ struct ContentView: View {
             Spacer()
             HStack {
                 Spacer()
-                Button("vrc_lowerlid_left") {
+                Button("Blink left eye") {
                     NotificationCenter.default.post(name: .changeShapeKey, object: "vrc_lowerlid_left")
                 }
                 .padding()
                 Spacer()
-                Button("vrc_blink_right") {
+                Button("Blink right eye") {
                     NotificationCenter.default.post(name: .changeShapeKey, object: "vrc_blink_right")
                 }
                 .padding()
                 Spacer()
             }
             .padding(.bottom, 20)
+            
+            HStack {
+                Spacer()
+                Button("Move Head Left") {
+                    NotificationCenter.default.post(name: .moveHeadLeft, object: nil)
+                }
+                .padding()
+                Spacer()
+                Button("Move Head Right") {
+                    NotificationCenter.default.post(name: .moveHeadRight, object: nil)
+                }
+                .padding()
+                Spacer()
+            }
+            .padding(.bottom, 20)
+            
             VStack(alignment: .leading) {
                 Text("Camera Position: x: \(cameraPosition.x), y: \(cameraPosition.y), z: \(cameraPosition.z)")
                 Text("Mesh Position: x: \(meshPosition.x), y: \(meshPosition.y), z: \(meshPosition.z)")
@@ -57,9 +73,11 @@ struct ContentView: View {
                 }
                 .padding()
             }
+            
         }
     }
 }
+
 
 
 #Preview {
