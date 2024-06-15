@@ -12,12 +12,11 @@
 		49DF49E92C1D948700E07670 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49DF49E82C1D948700E07670 /* Assets.xcassets */; };
 		49DF49EC2C1D948700E07670 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49DF49EB2C1D948700E07670 /* Preview Assets.xcassets */; };
 		49DF49F32C1D949E00E07670 /* ShapeKeyAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF49F22C1D949E00E07670 /* ShapeKeyAnimator.swift */; };
-		49DF49F72C1D94B800E07670 /* robot.usdc in Resources */ = {isa = PBXBuildFile; fileRef = 49DF49F52C1D94B800E07670 /* robot.usdc */; };
-		49DF49F82C1D94B800E07670 /* robot.scn in Resources */ = {isa = PBXBuildFile; fileRef = 49DF49F62C1D94B800E07670 /* robot.scn */; };
 		49DF49FC2C1D982D00E07670 /* SyllableProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF49FB2C1D982D00E07670 /* SyllableProcessor.swift */; };
 		49DF49FE2C1D984000E07670 /* SceneViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF49FD2C1D984000E07670 /* SceneViewContainer.swift */; };
 		49DF4A002C1D9EA700E07670 /* SyllableMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF49FF2C1D9EA700E07670 /* SyllableMapper.swift */; };
 		49DF4A022C1DB30500E07670 /* TextToSpeechProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF4A012C1DB30500E07670 /* TextToSpeechProcessor.swift */; };
+		49DF4A0B2C1DE60900E07670 /* robot.scn in Resources */ = {isa = PBXBuildFile; fileRef = 49DF4A0A2C1DE60900E07670 /* robot.scn */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,12 +26,12 @@
 		49DF49E82C1D948700E07670 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		49DF49EB2C1D948700E07670 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		49DF49F22C1D949E00E07670 /* ShapeKeyAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShapeKeyAnimator.swift; sourceTree = "<group>"; };
-		49DF49F52C1D94B800E07670 /* robot.usdc */ = {isa = PBXFileReference; lastKnownFileType = file; path = robot.usdc; sourceTree = "<group>"; };
-		49DF49F62C1D94B800E07670 /* robot.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = robot.scn; sourceTree = "<group>"; };
 		49DF49FB2C1D982D00E07670 /* SyllableProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyllableProcessor.swift; sourceTree = "<group>"; };
 		49DF49FD2C1D984000E07670 /* SceneViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViewContainer.swift; sourceTree = "<group>"; };
 		49DF49FF2C1D9EA700E07670 /* SyllableMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyllableMapper.swift; sourceTree = "<group>"; };
 		49DF4A012C1DB30500E07670 /* TextToSpeechProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToSpeechProcessor.swift; sourceTree = "<group>"; };
+		49DF4A052C1DE04D00E07670 /* robot.usdc */ = {isa = PBXFileReference; lastKnownFileType = file; path = robot.usdc; sourceTree = "<group>"; };
+		49DF4A0A2C1DE60900E07670 /* robot.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = robot.scn; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,8 +89,8 @@
 		49DF49F42C1D94A600E07670 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				49DF49F62C1D94B800E07670 /* robot.scn */,
-				49DF49F52C1D94B800E07670 /* robot.usdc */,
+				49DF4A052C1DE04D00E07670 /* robot.usdc */,
+				49DF4A0A2C1DE60900E07670 /* robot.scn */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -154,8 +153,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49DF49F72C1D94B800E07670 /* robot.usdc in Resources */,
-				49DF49F82C1D94B800E07670 /* robot.scn in Resources */,
+				49DF4A0B2C1DE60900E07670 /* robot.scn in Resources */,
 				49DF49EC2C1D948700E07670 /* Preview Assets.xcassets in Resources */,
 				49DF49E92C1D948700E07670 /* Assets.xcassets in Resources */,
 			);

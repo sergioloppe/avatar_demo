@@ -15,7 +15,6 @@ struct SceneViewContainer: UIViewRepresentable {
     @Binding var meshRotation: SCNVector3
     @Binding var meshScale: SCNVector3
 
-    
     class Coordinator: NSObject, SCNSceneRendererDelegate {
         var parent: SceneViewContainer
         var sceneView: SCNView?
@@ -39,6 +38,8 @@ struct SceneViewContainer: UIViewRepresentable {
             NotificationCenter.default.addObserver(self, selector: #selector(readText(notification:)), name: .readText, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(moveHeadLeft(notification:)), name: .moveHeadLeft, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(moveHeadRight(notification:)), name: .moveHeadRight, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(moveHeadNodding(notification:)), name: .performHeadNod, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(moveHeadShaking(notification:)), name: .performHeadShaking, object: nil)
         }
 
         @objc func changeShapeKey(notification: NSNotification) {
@@ -59,6 +60,14 @@ struct SceneViewContainer: UIViewRepresentable {
             moveHead(to: .right)
         }
 
+        @objc func moveHeadNodding(notification: NSNotification) {
+            performHeadNod()
+        }
+        
+        @objc func moveHeadShaking(notification: NSNotification) {
+            performHeadShaking()
+        }
+        
         func setup(sceneView: SCNView) {
             self.sceneView = sceneView
             sceneView.delegate = self
@@ -133,7 +142,8 @@ struct SceneViewContainer: UIViewRepresentable {
         func setupNodeTransformations(node: SCNNode, containerHeight: CGFloat) {
             let scaleFactor = containerHeight / 100
             node.scale = SCNVector3(scaleFactor, scaleFactor, scaleFactor)
-            node.position = SCNVector3(0, 0, -scaleFactor * 1.23)
+            node.position = SCNVector3(0.2, 0.2, -scaleFactor * 1.23)
+            node.eulerAngles = SCNVector3(0.15, 0, -0.25)
         }
 
         private func startContinuousRotation() {
@@ -152,7 +162,6 @@ struct SceneViewContainer: UIViewRepresentable {
             }
             
             currentHeadAngle += angle
-            print("Current angle: \(currentHeadAngle)")
             let rotateAction = SCNAction.rotateBy(x: 0, y: CGFloat(GLKMathDegreesToRadians(angle)), z: 0, duration: 1)
 
             headNode.runAction(rotateAction) {
@@ -160,16 +169,42 @@ struct SceneViewContainer: UIViewRepresentable {
             }
         }
 
-        func moveHead(to direction: HeadDirection, degrees: Float = 30) {
+        func moveHead(to direction: HeadDirection, degrees: Float = 15) {
             guard let sceneView = sceneView else { return }
             guard let headNode = sceneView.scene?.rootNode.childNode(withName: nodeNameHead, recursively: true) else { return }
 
-            var angle = CGFloat(GLKMathDegreesToRadians(degrees))
-
+            let angle: CGFloat
+            switch direction {
+            case .left:
+                angle = CGFloat(GLKMathDegreesToRadians(degrees))
+            case .right:
+                angle = CGFloat(GLKMathDegreesToRadians(-degrees))
+            }
+            
             let rotateAction = SCNAction.rotateBy(x: 0, y: angle, z: 0, duration: 2)
             headNode.runAction(rotateAction)
         }
+        
+        func performHeadNod() {
+            guard let sceneView = sceneView else { return }
+            guard let headNode = sceneView.scene?.rootNode.childNode(withName: nodeNameHead, recursively: true) else { return }
 
+            let nodDown = SCNAction.rotateBy(x: CGFloat(GLKMathDegreesToRadians(10)), y: 0, z: 0, duration: 0.5)
+            let nodUp = SCNAction.rotateBy(x: CGFloat(GLKMathDegreesToRadians(-10)), y: 0, z: 0, duration: 0.5)
+            let nodSequence = SCNAction.sequence([nodDown, nodUp, nodDown, nodUp, nodDown, nodUp])
+            headNode.runAction(nodSequence)
+        }
+
+        func performHeadShaking() {
+            guard let sceneView = sceneView else { return }
+            guard let headNode = sceneView.scene?.rootNode.childNode(withName: nodeNameHead, recursively: true) else { return }
+
+            let nodDown = SCNAction.rotateBy(x: 0, y: CGFloat(GLKMathDegreesToRadians(10)), z: 0, duration: 0.5)
+            let nodUp = SCNAction.rotateBy(x: 0, y: CGFloat(GLKMathDegreesToRadians(-10)), z: 0, duration: 0.5)
+            let nodSequence = SCNAction.sequence([nodDown, nodUp, nodDown, nodUp, nodDown, nodUp])
+            headNode.runAction(nodSequence)
+        }
+        
         enum HeadDirection {
             case left
             case right
@@ -221,4 +256,6 @@ extension Notification.Name {
     static let readText = Notification.Name("readText")
     static let moveHeadLeft = Notification.Name("moveHeadLeft")
     static let moveHeadRight = Notification.Name("moveHeadRight")
+    static let performHeadNod = Notification.Name("performHeadNod")
+    static let performHeadShaking = Notification.Name("performHeadShaking")
 }

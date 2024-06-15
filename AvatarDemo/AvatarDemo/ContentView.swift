@@ -15,7 +15,7 @@ struct ContentView: View {
     @State private var meshPosition: SCNVector3 = SCNVector3(0, 0, 0)
     @State private var meshRotation: SCNVector3 = SCNVector3(0, 0, 0)
     @State private var meshScale: SCNVector3 = SCNVector3(0.2, 0.2, 0.2)
-    @State private var inputText: String = ""
+    @State private var inputText: String = "Do you think this is ok?"
 
     var body: some View {
         VStack {
@@ -40,13 +40,24 @@ struct ContentView: View {
             
             HStack {
                 Spacer()
-                Button("Move Head Left") {
-                    NotificationCenter.default.post(name: .moveHeadLeft, object: nil)
+                Button("Yes") {
+                    NotificationCenter.default.post(name: .performHeadNod, object: nil)
                 }
-                .padding()
+                Spacer()
+                Button("Nop") {
+                    NotificationCenter.default.post(name: .performHeadShaking, object: nil)
+                }
+                Spacer()
+            }
+            HStack {
                 Spacer()
                 Button("Move Head Right") {
                     NotificationCenter.default.post(name: .moveHeadRight, object: nil)
+                }
+                .padding()
+                Spacer()
+                Button("Move Head Left") {
+                    NotificationCenter.default.post(name: .moveHeadLeft, object: nil)
                 }
                 .padding()
                 Spacer()
