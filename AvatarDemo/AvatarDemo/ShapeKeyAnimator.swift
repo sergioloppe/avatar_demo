@@ -11,11 +11,13 @@ class ShapeKeyAnimator: NSObject {
     private var timer: Timer?
     private var morpher: SCNMorpher?
     private var targetIndices: [String: Int] = [:]
-    
-    init(morpher: SCNMorpher, targetNames: [String]) {
+    private var syllableMapper: SyllableMapper
+
+    init(morpher: SCNMorpher, syllableMapper: SyllableMapper) {
         self.morpher = morpher
+        self.syllableMapper = syllableMapper
         super.init()
-        for (index, name) in targetNames.enumerated() {
+        for (index, name) in DefaultSyllableMapper.targetNames.enumerated() {
             targetIndices[name] = index
         }
     }
@@ -52,6 +54,32 @@ class ShapeKeyAnimator: NSObject {
                 morpher.setWeight(0.0, forTargetAt: i)
             }
             morpher.setWeight(CGFloat(currentWeight), forTargetAt: targetIndex)
+        }
+    }
+    
+    func animateSyllables(_ syllables: [String]) {
+        guard let morpher = self.morpher else { return }
+        
+        var syllableIndex = 0
+        
+        // Invalidate any existing timer
+        timer?.invalidate()
+        
+        timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] timer in
+            guard let self = self else { return }
+            if syllableIndex >= syllables.count {
+                timer.invalidate()
+                return
+            }
+            
+            let syllable = syllables[syllableIndex]
+            let mappedTarget = self.syllableMapper.mapSyllableToMorpher(syllable)
+            if let targetIndex = self.targetIndices[mappedTarget] {
+                // Animate the target morpher for the current syllable
+                self.animateShapeKey(named: mappedTarget)
+            }
+            
+            syllableIndex += 1
         }
     }
     
