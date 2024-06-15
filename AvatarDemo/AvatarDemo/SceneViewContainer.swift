@@ -15,6 +15,7 @@ struct SceneViewContainer: UIViewRepresentable {
     @Binding var meshRotation: SCNVector3
     @Binding var meshScale: SCNVector3
 
+    
     class Coordinator: NSObject, SCNSceneRendererDelegate {
         var parent: SceneViewContainer
         var sceneView: SCNView?
@@ -26,6 +27,9 @@ struct SceneViewContainer: UIViewRepresentable {
         let nodeNameMesh = "Mesh"
         let nodeNameCamera = "Camera.001"
         let nodeNameHead = "mixamorig_Head"
+        
+        // Animations
+        private var currentHeadAngle: Float = 0
 
         init(parent: SceneViewContainer) {
             self.parent = parent
@@ -133,26 +137,36 @@ struct SceneViewContainer: UIViewRepresentable {
         }
 
         private func startContinuousRotation() {
-            guard let sceneView = sceneView else { return }
-            guard let meshNode = sceneView.scene?.rootNode.childNode(withName: nodeNameMesh, recursively: true) else { return }
-            
-            let rotationAction = SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: CGFloat(GLKMathDegreesToRadians(10)), z: 0, duration: 5))
-            meshNode.runAction(rotationAction)
+            DispatchQueue.main.asyncAfter(deadline: .now() + .random(in: 2...5)) {
+                self.continuousHeadMovement()
+            }
         }
 
-        func moveHead(to direction: HeadDirection, degrees: Float = 10) {
+        private func continuousHeadMovement() {
             guard let sceneView = sceneView else { return }
             guard let headNode = sceneView.scene?.rootNode.childNode(withName: nodeNameHead, recursively: true) else { return }
 
-            let angle: CGFloat
-            switch direction {
-            case .left:
-                angle = CGFloat(GLKMathDegreesToRadians(degrees))
-            case .right:
-                angle = CGFloat(GLKMathDegreesToRadians(-degrees))
+            var angle = Float.random(in: -10...10)
+            if abs(currentHeadAngle + angle) > 15 {
+                angle *= -1
             }
+            
+            currentHeadAngle += angle
+            print("Current angle: \(currentHeadAngle)")
+            let rotateAction = SCNAction.rotateBy(x: 0, y: CGFloat(GLKMathDegreesToRadians(angle)), z: 0, duration: 1)
 
-            let rotateAction = SCNAction.rotateBy(x: 0, y: angle, z: angle, duration: 0.5)
+            headNode.runAction(rotateAction) {
+                self.startContinuousRotation()
+            }
+        }
+
+        func moveHead(to direction: HeadDirection, degrees: Float = 30) {
+            guard let sceneView = sceneView else { return }
+            guard let headNode = sceneView.scene?.rootNode.childNode(withName: nodeNameHead, recursively: true) else { return }
+
+            var angle = CGFloat(GLKMathDegreesToRadians(degrees))
+
+            let rotateAction = SCNAction.rotateBy(x: 0, y: angle, z: 0, duration: 2)
             headNode.runAction(rotateAction)
         }
 
