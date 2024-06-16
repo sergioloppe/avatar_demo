@@ -13,7 +13,7 @@ AvatarDemo is 1-day SwiftUI-based project that integrates SceneKit and SpriteKit
 
 ## Class Structure
 
-![Class Diagram](images/diagam.svg)
+![Class Diagram](images/diagram.svg)
 
 ### ContentView
 - The main SwiftUI view that contains the `SceneViewContainer` and controls for interacting with the avatar.
