@@ -2,7 +2,7 @@
 
 ![Robot](images/3dmodel.png)
 
-AvatarDemo is 1-day SwiftUI-based project that integrates SceneKit and SpriteKit to create an interactive 3D avatar. The avatar responds to text input with text-to-speech (TTS) and synchronized lip movements. The project also includes head movements and animations based on specific keywords in the input text. It's free so don't complain about code and don't expect much.
+AvatarDemo is a couple of days SwiftUI-based project that integrates SceneKit and SpriteKit to create an interactive 3D avatar. The avatar responds to text input with text-to-speech (TTS) and synchronized lip movements. The project also includes head movements and animations based on specific keywords in the input text. It's free so don't complain about the code and don't expect much.
 
 ## Features
 
@@ -14,6 +14,10 @@ AvatarDemo is 1-day SwiftUI-based project that integrates SceneKit and SpriteKit
 ## Class Structure
 
 ![Class Diagram](images/diagram.svg)
+
+### AvatarConfiguration
+- Configures the 3D model of the avatar including node names, textures, initial positions, and animations.
+- Contains mappings for phonemes to morpher targets.
 
 ### ContentView
 - The main SwiftUI view that contains the `SceneViewContainer` and controls for interacting with the avatar.
@@ -47,6 +51,7 @@ AvatarDemo is 1-day SwiftUI-based project that integrates SceneKit and SpriteKit
 1. **Setup the Scene:**
    - The `SceneViewContainer` sets up the 3D scene, loads the avatar model, and applies materials.
    - Initializes the `ShapeKeyAnimator` and configures the TTS processor.
+   - The 3D model configuration of the avatar is set up in the `AvatarConfiguration` class.
 
 2. **Interact with the Avatar:**
    - Use the provided controls to trigger TTS and animations.
@@ -80,4 +85,3 @@ This project is licensed under the MIT License.
 
 ## 3D Model
 [Lalobot by poly.pizza](https://poly.pizza/bundle/100-Avatars-R2-1VwH0yHhlS)
-
