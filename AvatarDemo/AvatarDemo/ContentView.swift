@@ -26,12 +26,12 @@ struct ContentView: View {
             HStack {
                 Spacer()
                 Button("Blink left eye") {
-                    NotificationCenter.default.post(name: .changeShapeKey, object: "vrc_blink_left")
+                    NotificationCenter.default.post(name: .avatarChangeShapeKey, object: "vrc_blink_left")
                 }
                 .padding()
                 Spacer()
                 Button("Blink right eye") {
-                    NotificationCenter.default.post(name: .changeShapeKey, object: "vrc_blink_right")
+                    NotificationCenter.default.post(name: .avatarChangeShapeKey, object: "vrc_blink_right")
                 }
                 .padding()
                 Spacer()
@@ -41,23 +41,23 @@ struct ContentView: View {
             HStack {
                 Spacer()
                 Button("Yes") {
-                    NotificationCenter.default.post(name: .performHeadNod, object: nil)
+                    NotificationCenter.default.post(name: .avatarPerformHeadNod, object: nil)
                 }
                 Spacer()
                 Button("Nop") {
-                    NotificationCenter.default.post(name: .performHeadShaking, object: nil)
+                    NotificationCenter.default.post(name: .avatarPerformHeadShaking, object: nil)
                 }
                 Spacer()
             }
             HStack {
                 Spacer()
                 Button("Move Head Right") {
-                    NotificationCenter.default.post(name: .moveHeadRight, object: nil)
+                    NotificationCenter.default.post(name: .avatarMoveHeadRight, object: nil)
                 }
                 .padding()
                 Spacer()
                 Button("Move Head Left") {
-                    NotificationCenter.default.post(name: .moveHeadLeft, object: nil)
+                    NotificationCenter.default.post(name: .avatarMoveHeadLeft, object: nil)
                 }
                 .padding()
                 Spacer()
@@ -80,7 +80,7 @@ struct ContentView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
                 Button("Read It") {
-                    NotificationCenter.default.post(name: .readText, object: inputText)
+                    NotificationCenter.default.post(name: .avatarReadText, object: inputText)
                 }
                 .padding()
             }

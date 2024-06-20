@@ -77,10 +77,10 @@ class SyllableProcessor {
         // Check for special cases like "yes" and "no"
         for syllable in syllables {
             if syllable.lowercased() == "yes" {
-                NotificationCenter.default.post(name: .performHeadNod, object: nil)
+                NotificationCenter.default.post(name: .avatarPerformHeadNod, object: nil)
             }
             if syllable.lowercased() == "no" || syllable.lowercased() == "not" {
-                NotificationCenter.default.post(name: .performHeadShaking, object: nil)
+                NotificationCenter.default.post(name: .avatarPerformHeadShaking, object: nil)
             }
         }
         

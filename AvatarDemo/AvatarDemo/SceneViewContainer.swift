@@ -31,12 +31,12 @@ struct SceneViewContainer: UIViewRepresentable {
             self.textToSpeechProcessor = TextToSpeechProcessor(configuration: parent.avatarConfiguration)
             
             super.init()
-            NotificationCenter.default.addObserver(self, selector: #selector(changeShapeKey(notification:)), name: .changeShapeKey, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(readText(notification:)), name: .readText, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(moveHeadLeft(notification:)), name: .moveHeadLeft, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(moveHeadRight(notification:)), name: .moveHeadRight, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(moveHeadNodding(notification:)), name: .performHeadNod, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(moveHeadShaking(notification:)), name: .performHeadShaking, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(changeShapeKey(notification:)), name: .avatarChangeShapeKey, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(readText(notification:)), name: .avatarReadText, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(moveHeadLeft(notification:)), name: .avatarMoveHeadLeft, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(moveHeadRight(notification:)), name: .avatarMoveHeadRight, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(moveHeadNodding(notification:)), name: .avatarPerformHeadNod, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(moveHeadShaking(notification:)), name: .avatarPerformHeadShaking, object: nil)
         }
 
         @objc func changeShapeKey(notification: NSNotification) {
@@ -249,10 +249,10 @@ struct SceneViewContainer: UIViewRepresentable {
 }
 
 extension Notification.Name {
-    static let changeShapeKey = Notification.Name("changeShapeKey")
-    static let readText = Notification.Name("readText")
-    static let moveHeadLeft = Notification.Name("moveHeadLeft")
-    static let moveHeadRight = Notification.Name("moveHeadRight")
-    static let performHeadNod = Notification.Name("performHeadNod")
-    static let performHeadShaking = Notification.Name("performHeadShaking")
+    static let avatarChangeShapeKey = Notification.Name("avatarChangeShapeKey")
+    static let avatarReadText = Notification.Name("avatarReadText")
+    static let avatarMoveHeadLeft = Notification.Name("avatarMoveHeadLeft")
+    static let avatarMoveHeadRight = Notification.Name("avatarMoveHeadRight")
+    static let avatarPerformHeadNod = Notification.Name("avatarPerformHeadNod")
+    static let avatarPerformHeadShaking = Notification.Name("avatarPerformHeadShaking")
 }
