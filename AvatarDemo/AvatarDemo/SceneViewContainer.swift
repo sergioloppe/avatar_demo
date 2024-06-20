@@ -74,7 +74,7 @@ struct SceneViewContainer: UIViewRepresentable {
             guard let sceneView = sceneView, let rootNode = sceneView.scene?.rootNode else { return }
             if shapeKeyAnimator == nil, let morpher = ShapeKeyAnimator.findMorpher(in: rootNode) {
                 let syllableMapper = DefaultSyllableMapper(configuration: parent.avatarConfiguration)
-                self.shapeKeyAnimator = ShapeKeyAnimator(morpher: morpher, syllableMapper: syllableMapper, configuration: parent.avatarConfiguration)
+                self.shapeKeyAnimator = ShapeKeyAnimator(morpher: morpher, node: rootNode, syllableMapper: syllableMapper, configuration: parent.avatarConfiguration)
             }
         }
 

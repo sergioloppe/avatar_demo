@@ -14,13 +14,15 @@ class ShapeKeyAnimator: NSObject {
     private var targetIndices: [String: Int] = [:]
     private var syllableMapper: SyllableMapper
     private var configuration: AvatarConfiguration
-
+    private var node: SCNNode
+    
     var asyncFrequencyRange: ClosedRange<TimeInterval> = 2.0...5.0
     var asyncAnimationDuration: TimeInterval = 0.1
     var syncAnimationDuration: TimeInterval = 0.09
 
-    init(morpher: SCNMorpher, syllableMapper: SyllableMapper, configuration: AvatarConfiguration) {
+    init(morpher: SCNMorpher, node: SCNNode, syllableMapper: SyllableMapper, configuration: AvatarConfiguration) {
         self.morpher = morpher
+        self.node = node
         self.syllableMapper = syllableMapper
         self.configuration = configuration
         
@@ -43,70 +45,36 @@ class ShapeKeyAnimator: NSObject {
         animateMultipleShapeKey(named: configuration.blinkTargets, duration: asyncAnimationDuration)
     }
 
-    func animateShapeKey(named shapeKey: String, duration: TimeInterval) {
-        guard let morpher = self.morpher, let targetIndex = targetIndices[shapeKey] else { return }
-        
-        var currentWeight: Float = 0.0
-        let step: Float = 1.0 / Float(duration)
-        var goingUp = true
-        
-        print("\(shapeKey) with duration \(duration)")
-        
-        Timer.scheduledTimer(withTimeInterval: duration, repeats: true) { timer in
-            if goingUp {
-                currentWeight += step
-                if currentWeight >= 1.0 {
-                    currentWeight = 1.0
-                    goingUp = false
-                }
-            } else {
-                currentWeight -= step
-                if currentWeight <= 0.0 {
-                    currentWeight = 0.0
-                    timer.invalidate()
-                }
+    private func createWeightAction(targetIndices: [Int], duration: TimeInterval, increase: Bool) -> SCNAction {
+        return SCNAction.customAction(duration: duration) { (node, elapsedTime) in
+            let weight = increase ? CGFloat(elapsedTime / CGFloat(duration)) : CGFloat(1.0 - (elapsedTime / CGFloat(duration)))
+            for targetIndex in targetIndices {
+                self.morpher?.setWeight(weight, forTargetAt: targetIndex)
             }
-            
-            for i in 0..<morpher.targets.count {
-                morpher.setWeight(0.0, forTargetAt: i)
-            }
-            morpher.setWeight(CGFloat(currentWeight), forTargetAt: targetIndex)
         }
     }
 
-    func animateMultipleShapeKey(named shapeKeys: [String], duration: TimeInterval) {
-        guard let morpher = self.morpher else { return }
+    func animateShapeKey(named shapeKey: String, duration: TimeInterval) {
+        guard let targetIndex = targetIndices[shapeKey] else { return }
+        
+        let halfDuration = duration / 2.0
+        let increaseWeight = createWeightAction(targetIndices: [targetIndex], duration: halfDuration, increase: true)
+        let decreaseWeight = createWeightAction(targetIndices: [targetIndex], duration: halfDuration, increase: false)
 
+        let sequence = SCNAction.sequence([increaseWeight, decreaseWeight])
+        node.runAction(sequence)
+    }
+    
+    func animateMultipleShapeKey(named shapeKeys: [String], duration: TimeInterval) {
         let targetIndices = shapeKeys.compactMap { self.targetIndices[$0] }
         guard !targetIndices.isEmpty else { return }
         
-        var currentWeight: Float = 0.0
-        let step: Float = 1.0 / Float(duration * 100)
-        var goingUp = true
-        
-        Timer.scheduledTimer(withTimeInterval: 0.005, repeats: true) { timer in
-            if goingUp {
-                currentWeight += step
-                if currentWeight >= 1.0 {
-                    currentWeight = 1.0
-                    goingUp = false
-                }
-            } else {
-                currentWeight -= step
-                if currentWeight <= 0.0 {
-                    currentWeight = 0.0
-                    timer.invalidate()
-                }
-            }
-            
-            for i in 0..<morpher.targets.count {
-                morpher.setWeight(0.0, forTargetAt: i)
-            }
-            
-            for targetIndex in targetIndices {
-                morpher.setWeight(CGFloat(currentWeight), forTargetAt: targetIndex)
-            }
-        }
+        let halfDuration = duration / 2.0
+        let increaseWeight = createWeightAction(targetIndices: targetIndices, duration: halfDuration, increase: true)
+        let decreaseWeight = createWeightAction(targetIndices: targetIndices, duration: halfDuration, increase: false)
+
+        let sequence = SCNAction.sequence([increaseWeight, decreaseWeight])
+        node.runAction(sequence)
     }
     
     func animateSyllables(_ syllables: [String], totalDuration: TimeInterval) {
