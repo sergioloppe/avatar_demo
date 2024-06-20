@@ -7,18 +7,19 @@
 
 import SceneKit
 
+/// Animator class for handling shape key animations on the avatar.
 class ShapeKeyAnimator: NSObject {
-    private var syncTimer: Timer?
-    private var asyncTimer: Timer?
-    private var morpher: SCNMorpher?
-    private var targetIndices: [String: Int] = [:]
-    private var syllableMapper: SyllableMapper
+    private var morpher: SCNMorpher?                // Morpher for shape key animations
+    private var node: SCNNode                       // Node that the morpher is attached to
+    private var syllableMapper: SyllableMapper      // Mapper for syllables to morph targets
     private var configuration: AvatarConfiguration
-    private var node: SCNNode
-    
-    var asyncFrequencyRange: ClosedRange<TimeInterval> = 2.0...5.0
+
+    private var syncTimer: Timer?                   // Timer for synchronous animations
+    private var asyncTimer: Timer?                  // Timer for asynchronous animations
+
+    private var targetIndices: [String: Int] = [:]                  // Mapping of target names to indices based on the morpher
+    var asyncFrequencyRange: ClosedRange<TimeInterval> = 2.0...5.0  // Range for async animation frequency
     var asyncAnimationDuration: TimeInterval = 0.1
-    var syncAnimationDuration: TimeInterval = 0.09
 
     init(morpher: SCNMorpher, node: SCNNode, syllableMapper: SyllableMapper, configuration: AvatarConfiguration) {
         self.morpher = morpher

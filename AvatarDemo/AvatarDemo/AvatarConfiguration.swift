@@ -8,17 +8,18 @@
 import Foundation
 import SceneKit
 
+/// Configuration struct for the avatar, containing various settings and mappings used in the avatar animation and rendering.
 struct AvatarConfiguration {
     var nodeNameRoot: String
     var nodeNameMesh: String
     var nodeNameCamera: String
     var nodeNameHead: String
-    var textureName: String
-    var containerHeight: CGFloat
-    var initialPosition: SCNVector3
-    var initialEulerAngles: SCNVector3
-    var blinkTargets: [String]
-    var phonemeMappings: [String: String]
+    var textureName: String                 // Name of the texture to be applied to the mesh
+    var containerHeight: CGFloat            // Height of the container for scaling the avatar
+    var initialPosition: SCNVector3         // Initial position of the avatar
+    var initialEulerAngles: SCNVector3      // Initial rotation angles of the avatar
+    var blinkTargets: [String]              // List of blink target names
+    var phonemeMappings: [String: String]   // Mapping of phonemes to morpher target names
 
     static let defaultConfiguration = AvatarConfiguration(
         nodeNameRoot: "root",

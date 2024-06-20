@@ -9,6 +9,7 @@ import SwiftUI
 import SceneKit
 import SpriteKit
 
+/// A container view for displaying and interacting with the avatar's scene.
 struct SceneViewContainer: UIViewRepresentable {
     @Binding var cameraPosition: SCNVector3
     @Binding var meshPosition: SCNVector3
