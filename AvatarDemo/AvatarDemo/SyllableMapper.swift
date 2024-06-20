@@ -17,8 +17,19 @@ class DefaultSyllableMapper: SyllableMapper {
     init(configuration: AvatarConfiguration) {
         self.phonemeMappings = configuration.phonemeMappings
     }
-
+    
     func mapSyllableToMorpher(_ syllable: String) -> String {
-        return phonemeMappings[syllable, default: "vrc_v_sil"]
+        let phoneme = self.getPhoneme(for: syllable)
+        return self.phonemeMappings[phoneme, default: "sil"]
+    }
+    
+    private func getPhoneme(for syllable: String) -> String {
+        let vowels = CharacterSet(charactersIn: "aeiou")
+        for char in syllable.lowercased() {
+            if String(char).rangeOfCharacter(from: vowels) != nil {
+                return String(char)
+            }
+        }
+        return "sil"
     }
 }
