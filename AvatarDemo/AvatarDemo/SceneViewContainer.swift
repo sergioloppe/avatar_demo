@@ -14,6 +14,7 @@ struct SceneViewContainer: UIViewRepresentable {
     @Binding var meshPosition: SCNVector3
     @Binding var meshRotation: SCNVector3
     @Binding var meshScale: SCNVector3
+    let avatarConfiguration: AvatarConfiguration
 
     class Coordinator: NSObject, SCNSceneRendererDelegate {
         var parent: SceneViewContainer
@@ -21,18 +22,13 @@ struct SceneViewContainer: UIViewRepresentable {
         var shapeKeyAnimator: ShapeKeyAnimator?
         var textToSpeechProcessor: TextToSpeechProcessor
         
-        // Constants
-        let nodeNameRoot = "root"
-        let nodeNameMesh = "Mesh"
-        let nodeNameCamera = "Camera.001"
-        let nodeNameHead = "mixamorig_Head"
-        
         // Animations
         private var currentHeadAngle: Float = 0
 
         init(parent: SceneViewContainer) {
             self.parent = parent
-            self.textToSpeechProcessor = TextToSpeechProcessor()
+            self.textToSpeechProcessor = TextToSpeechProcessor(configuration: parent.avatarConfiguration)
+            
             super.init()
             NotificationCenter.default.addObserver(self, selector: #selector(changeShapeKey(notification:)), name: .changeShapeKey, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(readText(notification:)), name: .readText, object: nil)
@@ -77,17 +73,17 @@ struct SceneViewContainer: UIViewRepresentable {
         func initializeShapeKeyAnimatorIfNeeded() {
             guard let sceneView = sceneView, let rootNode = sceneView.scene?.rootNode else { return }
             if shapeKeyAnimator == nil, let morpher = ShapeKeyAnimator.findMorpher(in: rootNode) {
-                let syllableMapper = DefaultSyllableMapper()
-                self.shapeKeyAnimator = ShapeKeyAnimator(morpher: morpher, syllableMapper: syllableMapper)
+                let syllableMapper = DefaultSyllableMapper(configuration: parent.avatarConfiguration)
+                self.shapeKeyAnimator = ShapeKeyAnimator(morpher: morpher, syllableMapper: syllableMapper, configuration: parent.avatarConfiguration)
             }
         }
 
         func updateTransforms() {
             guard let sceneView = sceneView else { return }
-            if let cameraNode = sceneView.scene?.rootNode.childNode(withName: nodeNameCamera, recursively: true) {
+            if let cameraNode = sceneView.scene?.rootNode.childNode(withName: parent.avatarConfiguration.nodeNameCamera, recursively: true) {
                 parent.cameraPosition = cameraNode.position
             }
-            if let meshNode = sceneView.scene?.rootNode.childNode(withName: nodeNameMesh, recursively: true) {
+            if let meshNode = sceneView.scene?.rootNode.childNode(withName: parent.avatarConfiguration.nodeNameMesh, recursively: true) {
                 parent.meshPosition = meshNode.position
                 parent.meshRotation = meshNode.eulerAngles
                 parent.meshScale = meshNode.scale
@@ -99,7 +95,7 @@ struct SceneViewContainer: UIViewRepresentable {
             let textureMaterial = SCNMaterial()
             textureMaterial.diffuse.contents = loadedTexture
             
-            if let meshNode = node.childNode(withName: nodeNameMesh, recursively: true) {
+            if let meshNode = node.childNode(withName: parent.avatarConfiguration.nodeNameMesh, recursively: true) {
                 meshNode.geometry?.materials = [textureMaterial]
             }
         }
@@ -124,8 +120,8 @@ struct SceneViewContainer: UIViewRepresentable {
 
         func focusCameraOnHead() {
             guard let sceneView = sceneView else { return }
-            guard let cameraNode = sceneView.scene?.rootNode.childNode(withName: nodeNameCamera, recursively: true),
-                  let headNode = sceneView.scene?.rootNode.childNode(withName: nodeNameHead, recursively: true) else {
+            guard let cameraNode = sceneView.scene?.rootNode.childNode(withName: parent.avatarConfiguration.nodeNameCamera, recursively: true),
+                  let headNode = sceneView.scene?.rootNode.childNode(withName: parent.avatarConfiguration.nodeNameHead, recursively: true) else {
                 return
             }
 
@@ -139,11 +135,11 @@ struct SceneViewContainer: UIViewRepresentable {
             cameraNode.constraints = [lookAtConstraint]
         }
 
-        func setupNodeTransformations(node: SCNNode, containerHeight: CGFloat) {
-            let scaleFactor = containerHeight / 100
+        func setupNodeTransformations(node: SCNNode) {
+            let scaleFactor = parent.avatarConfiguration.containerHeight / 100
             node.scale = SCNVector3(scaleFactor, scaleFactor, scaleFactor)
-            node.position = SCNVector3(0.2, 0.2, -scaleFactor * 1.23)
-            node.eulerAngles = SCNVector3(0.15, 0, -0.25)
+            node.position = parent.avatarConfiguration.initialPosition
+            node.eulerAngles = parent.avatarConfiguration.initialEulerAngles
         }
 
         private func startContinuousRotation() {
@@ -154,7 +150,7 @@ struct SceneViewContainer: UIViewRepresentable {
 
         private func continuousHeadMovement() {
             guard let sceneView = sceneView else { return }
-            guard let headNode = sceneView.scene?.rootNode.childNode(withName: nodeNameHead, recursively: true) else { return }
+            guard let headNode = sceneView.scene?.rootNode.childNode(withName: parent.avatarConfiguration.nodeNameHead, recursively: true) else { return }
 
             var angle = Float.random(in: -10...10)
             if abs(currentHeadAngle + angle) > 15 {
@@ -171,7 +167,7 @@ struct SceneViewContainer: UIViewRepresentable {
 
         func moveHead(to direction: HeadDirection, degrees: Float = 15) {
             guard let sceneView = sceneView else { return }
-            guard let headNode = sceneView.scene?.rootNode.childNode(withName: nodeNameHead, recursively: true) else { return }
+            guard let headNode = sceneView.scene?.rootNode.childNode(withName: parent.avatarConfiguration.nodeNameHead, recursively: true) else { return }
 
             let angle: CGFloat
             switch direction {
@@ -187,7 +183,7 @@ struct SceneViewContainer: UIViewRepresentable {
         
         func performHeadNod() {
             guard let sceneView = sceneView else { return }
-            guard let headNode = sceneView.scene?.rootNode.childNode(withName: nodeNameHead, recursively: true) else { return }
+            guard let headNode = sceneView.scene?.rootNode.childNode(withName: parent.avatarConfiguration.nodeNameHead, recursively: true) else { return }
 
             let nodDown = SCNAction.rotateBy(x: CGFloat(GLKMathDegreesToRadians(10)), y: 0, z: 0, duration: 0.5)
             let nodUp = SCNAction.rotateBy(x: CGFloat(GLKMathDegreesToRadians(-10)), y: 0, z: 0, duration: 0.5)
@@ -197,7 +193,7 @@ struct SceneViewContainer: UIViewRepresentable {
 
         func performHeadShaking() {
             guard let sceneView = sceneView else { return }
-            guard let headNode = sceneView.scene?.rootNode.childNode(withName: nodeNameHead, recursively: true) else { return }
+            guard let headNode = sceneView.scene?.rootNode.childNode(withName: parent.avatarConfiguration.nodeNameHead, recursively: true) else { return }
 
             let nodDown = SCNAction.rotateBy(x: 0, y: CGFloat(GLKMathDegreesToRadians(10)), z: 0, duration: 0.5)
             let nodUp = SCNAction.rotateBy(x: 0, y: CGFloat(GLKMathDegreesToRadians(-10)), z: 0, duration: 0.5)
@@ -229,9 +225,9 @@ struct SceneViewContainer: UIViewRepresentable {
         sceneView.autoenablesDefaultLighting = true
         
         // Center the mesh in the scene, scale it appropriately, and rotate it to face the back
-        if let node = scene.rootNode.childNode(withName: context.coordinator.nodeNameRoot, recursively: true) {
-            context.coordinator.setupNodeTransformations(node: node, containerHeight: 300)
-            context.coordinator.applyMaterial(to: node, textureName: "phong22")
+        if let node = scene.rootNode.childNode(withName: avatarConfiguration.nodeNameRoot, recursively: true) {
+            context.coordinator.setupNodeTransformations(node: node)
+            context.coordinator.applyMaterial(to: node, textureName: avatarConfiguration.textureName)
         }
         
         // Print the node names and check for morphers
@@ -241,7 +237,7 @@ struct SceneViewContainer: UIViewRepresentable {
         context.coordinator.initializeShapeKeyAnimatorIfNeeded()
 
         // Focus the camera on the head
-        context.coordinator.focusCameraOnHead()
+        //context.coordinator.focusCameraOnHead()
         
         return sceneView
     }

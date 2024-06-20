@@ -10,21 +10,21 @@ import AVFoundation
 class TextToSpeechProcessor: NSObject, AVSpeechSynthesizerDelegate {
     private var speechSynthesizer: AVSpeechSynthesizer
     private var shapeKeyAnimator: ShapeKeyAnimator?
+    private let configuration: AvatarConfiguration
 
-    override init() {
-        speechSynthesizer = AVSpeechSynthesizer()
+    init(configuration: AvatarConfiguration) {
+        self.configuration = configuration
+        self.speechSynthesizer = AVSpeechSynthesizer()
         super.init()
-        speechSynthesizer.delegate = self
+        self.speechSynthesizer.delegate = self
     }
 
     func processAndReadText(_ text: String, animator: ShapeKeyAnimator?) {
         self.shapeKeyAnimator = animator
         let syllables = SyllableProcessor.processTextToSyllables(text)
-
         let totalDuration = estimateSpeechDuration(for: text)
-        
         shapeKeyAnimator?.animateSyllables(syllables, totalDuration: totalDuration)
-
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             let utterance = AVSpeechUtterance(string: text)
             utterance.voice = AVSpeechSynthesisVoice(language: "en-US")

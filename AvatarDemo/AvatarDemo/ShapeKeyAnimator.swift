@@ -13,20 +13,22 @@ class ShapeKeyAnimator: NSObject {
     private var morpher: SCNMorpher?
     private var targetIndices: [String: Int] = [:]
     private var syllableMapper: SyllableMapper
+    private var configuration: AvatarConfiguration
 
     var asyncFrequencyRange: ClosedRange<TimeInterval> = 2.0...5.0
     var asyncAnimationDuration: TimeInterval = 0.1
     var syncAnimationDuration: TimeInterval = 0.09
 
-    static let asyncTargets = ["vrc_lowerlid_right", "vrc_lowerlid_left", "vrc_blink_right", "vrc_blink_left"]
-
-    init(morpher: SCNMorpher, syllableMapper: SyllableMapper) {
+    init(morpher: SCNMorpher, syllableMapper: SyllableMapper, configuration: AvatarConfiguration) {
         self.morpher = morpher
         self.syllableMapper = syllableMapper
-        super.init()
-        for (index, name) in DefaultSyllableMapper.targetNames.enumerated() {
-            targetIndices[name] = index
+        self.configuration = configuration
+        
+        for (index, target) in morpher.targets.enumerated() {
+            targetIndices[target.name!] = index
         }
+        
+        super.init()
         startAsyncAnimations()
     }
     
@@ -38,14 +40,12 @@ class ShapeKeyAnimator: NSObject {
     }
 
     private func blink() {
-        let blinkTargets = ["vrc_lowerlid_left", "vrc_blink_right"]
-        animateMultipleShapeKey(named:blinkTargets, duration: asyncAnimationDuration)
+        animateMultipleShapeKey(named: configuration.blinkTargets, duration: asyncAnimationDuration)
     }
 
     func animateShapeKey(named shapeKey: String, duration: TimeInterval) {
         guard let morpher = self.morpher, let targetIndex = targetIndices[shapeKey] else { return }
         
-        // Smoothly transition the weight up and then down
         var currentWeight: Float = 0.0
         let step: Float = 1.0 / Float(duration)
         var goingUp = true
@@ -67,7 +67,6 @@ class ShapeKeyAnimator: NSObject {
                 }
             }
             
-            // Reset all weights to 0 before setting the target weight
             for i in 0..<morpher.targets.count {
                 morpher.setWeight(0.0, forTargetAt: i)
             }
@@ -81,7 +80,6 @@ class ShapeKeyAnimator: NSObject {
         let targetIndices = shapeKeys.compactMap { self.targetIndices[$0] }
         guard !targetIndices.isEmpty else { return }
         
-        // Smoothly transition the weight up and then down
         var currentWeight: Float = 0.0
         let step: Float = 1.0 / Float(duration * 100)
         var goingUp = true
@@ -101,7 +99,6 @@ class ShapeKeyAnimator: NSObject {
                 }
             }
             
-            // Reset all weights to 0 before setting the target weight
             for i in 0..<morpher.targets.count {
                 morpher.setWeight(0.0, forTargetAt: i)
             }

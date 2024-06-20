@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		49D666C22C243C000057E1AA /* AvatarConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D666C12C243C000057E1AA /* AvatarConfiguration.swift */; };
 		49DF49E52C1D948600E07670 /* AvatarDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF49E42C1D948600E07670 /* AvatarDemoApp.swift */; };
 		49DF49E72C1D948600E07670 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF49E62C1D948600E07670 /* ContentView.swift */; };
 		49DF49E92C1D948700E07670 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49DF49E82C1D948700E07670 /* Assets.xcassets */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		49D666C12C243C000057E1AA /* AvatarConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarConfiguration.swift; sourceTree = "<group>"; };
 		49DF49E12C1D948600E07670 /* AvatarDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AvatarDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49DF49E42C1D948600E07670 /* AvatarDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarDemoApp.swift; sourceTree = "<group>"; };
 		49DF49E62C1D948600E07670 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 				49DF49FD2C1D984000E07670 /* SceneViewContainer.swift */,
 				49DF4A012C1DB30500E07670 /* TextToSpeechProcessor.swift */,
 				49DF49FB2C1D982D00E07670 /* SyllableProcessor.swift */,
+				49D666C12C243C000057E1AA /* AvatarConfiguration.swift */,
 				49DF49FF2C1D9EA700E07670 /* SyllableMapper.swift */,
 				49DF49F22C1D949E00E07670 /* ShapeKeyAnimator.swift */,
 				49DF49F42C1D94A600E07670 /* Assets */,
@@ -169,6 +172,7 @@
 				49DF4A002C1D9EA700E07670 /* SyllableMapper.swift in Sources */,
 				49DF49FE2C1D984000E07670 /* SceneViewContainer.swift in Sources */,
 				49DF49E72C1D948600E07670 /* ContentView.swift in Sources */,
+				49D666C22C243C000057E1AA /* AvatarConfiguration.swift in Sources */,
 				49DF49E52C1D948600E07670 /* AvatarDemoApp.swift in Sources */,
 				49DF49FC2C1D982D00E07670 /* SyllableProcessor.swift in Sources */,
 				49DF49F32C1D949E00E07670 /* ShapeKeyAnimator.swift in Sources */,

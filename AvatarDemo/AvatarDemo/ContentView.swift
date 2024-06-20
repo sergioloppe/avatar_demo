@@ -19,14 +19,14 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            SceneViewContainer(cameraPosition: $cameraPosition, meshPosition: $meshPosition, meshRotation: $meshRotation, meshScale: $meshScale)
+            SceneViewContainer(cameraPosition: $cameraPosition, meshPosition: $meshPosition, meshRotation: $meshRotation, meshScale: $meshScale, avatarConfiguration: AvatarConfiguration.defaultConfiguration)
                 .frame(height: 200)
             
             Spacer()
             HStack {
                 Spacer()
                 Button("Blink left eye") {
-                    NotificationCenter.default.post(name: .changeShapeKey, object: "vrc_lowerlid_left")
+                    NotificationCenter.default.post(name: .changeShapeKey, object: "vrc_blink_left")
                 }
                 .padding()
                 Spacer()
